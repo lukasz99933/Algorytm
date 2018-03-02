@@ -20,7 +20,7 @@ struct Rpq
 void wczytywanie(vector<Rpq> &dane_rpq,int n)
 {
   int r,p,q;
-  fstream plik("plik.txt");
+  fstream plik("plik3.txt");
   if(plik.good())
   {
     plik>>n;
@@ -39,6 +39,7 @@ int algorytm_Schrage(vector<Rpq> &N, int n)
   vector<Rpq> G;
   while(!G.empty() || !N.empty())
   {
+    do{
     auto ik=min_element(N.begin(),N.end(),[](Rpq first,Rpq second){return first.r<second.r;});
     while(!N.empty() && (*ik).r<=t)
     {
@@ -50,14 +51,13 @@ int algorytm_Schrage(vector<Rpq> &N, int n)
     {
       t=(*ik).r;	    
     }
-    else
-    {
-      auto e=max_element(G.begin(),G.end(),[](Rpq first,Rpq second){return first.q>second.q;});
-      G.erase(e);
-      k=k+1;
-      t=t+(*e).p;
-      Cmax=max(Cmax,(t+(*e).q));
-    }
+    }while(G.empty());
+    auto e=min_element(G.begin(),G.end(),[](Rpq first,Rpq second){return first.q>second.q;});
+    //G.erase(e);
+    k=k+1;
+    t=t+(*e).p;
+    Cmax=max(Cmax,(t+(*e).q));
+    G.erase(e);
   }
   return Cmax;
 }
@@ -67,10 +67,6 @@ int main()
   vector<Rpq> dane_rpq;
   int n;
   wczytywanie(dane_rpq, n);
-  //for(auto i:dane_rpq)
-  //{
-//	cout << i.r << " "<< i.p << " " << i.q << endl;
-  //}
   cout << "Cmax to :" << algorytm_Schrage(dane_rpq,n)<<endl;
   return 0;
 }
