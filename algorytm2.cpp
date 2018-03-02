@@ -7,20 +7,22 @@ using namespace std;
 
 struct Rpq
 {
-  Rpq(int r,int p,int q):
+  Rpq(int r,int p,long long int q):
 	  r(r),
 	  p(p),
-	  q(q)
+	  q(q),
+	  p_org(p)
 	{}
   int r;
   int p;
-  int q;
+  long long int q;
+  int p_org;
 };
 
 void wczytywanie(vector<Rpq> &dane_rpq,int n)
 {
-  int r,p,q;
-  fstream plik("plik2.txt");
+  long long int r,p,q;
+  fstream plik("plik3.txt");
   if(plik.good())
   {
     plik>>n;
@@ -35,33 +37,35 @@ void wczytywanie(vector<Rpq> &dane_rpq,int n)
 
 int algorytm_Schrage(vector<Rpq> &N, int n)
 {
-  int t=0,Cmax=0;
+  long long int t=0,Cmax=0;
   vector<Rpq> G;
   vector<Rpq> C=N;
-  Rpq l(0,0,9999999);
+  Rpq l(0,0,9999999999999);
   while(!G.empty() || !N.empty())
   {
-    do{
-    auto ik=min_element(N.begin(),N.end(),[](Rpq first,Rpq second){return first.r<second.r;});
-    while(!N.empty() && (*ik).r<=t)
+    do
     {
-      G.push_back(*ik);
-      N.erase(ik);
-      ik=min_element(N.begin(),N.end(),[](Rpq first,Rpq second){return first.r<second.r;});
-      if((*ik).q>l.q)
+      auto ik=min_element(N.begin(),N.end(),[](Rpq first,Rpq second){return first.r<second.r;});
+      while(!N.empty() && (*ik).r<=t)
       {
-        l.p=t-(*ik).r;
-	t=(*ik).r;
-	if(l.p>0)
+        G.push_back(*ik);
+        if((*ik).q>l.q)
         {
-          G.push_back(l);
+          l.p=t-(*ik).r;
+	  t=(*ik).r;
+	  if(l.p>0)
+          {
+            G.push_back(l);
+          }
         }
+        N.erase(ik);
+	ik=min_element(N.begin(),N.end(),[](Rpq first,Rpq second){return first.r<second.r;});
+
       }
-    }
-    if(G.empty())
-    {
-      t=(*ik).r;	    
-    }
+      if(G.empty())
+      {
+        t=(*ik).r;	    
+      }
     }while(G.empty());
     auto e=min_element(G.begin(),G.end(),[](Rpq first,Rpq second){return first.q>second.q;});
     l=(*e);
